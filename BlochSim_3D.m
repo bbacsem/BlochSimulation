@@ -1,5 +1,6 @@
 clear;
 close all;
+warning('off');
 %% parameters
 main_magnetic_field = 7; %[T]
 
@@ -96,16 +97,15 @@ for tr = 1:n_TR
     parfor loc_x = 1:FOVx_offset*FOVy_offset*FOVz_offset
 
 
-
+        warning('off');
         B_temp = squeeze(B_st(loc_x,:,:));
-
         ode = @(t,M) [-R2(loc_x) gam*B_temp(3,floor(t/tstep)) -gam*B_temp(2,floor(t/tstep));
             -gam*B_temp(3,floor(t/tstep)) -R2(loc_x) gam*B_temp(1,floor(t/tstep));
             gam*B_temp(2,floor(t/tstep)) -gam*B_temp(1,floor(t/tstep)) -R1(loc_x)] * M+ [0; 0; M0(loc_x)*R1(loc_x)];
 
         [~, sol] = ode23s(ode, TP, M_input(:,loc_x)');
         M_dynamic(loc_x, :, :) = sol;
-        te_series(loc_x,tr,:) = sol(TE*sampling_rate, :);
+        te_series(loc_x, tr, :) = sol(TE*sampling_rate, :);
 
     end
 
