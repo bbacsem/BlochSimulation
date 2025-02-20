@@ -1,5 +1,6 @@
 clear;
 close all;
+warning('off');
 %% parameters
 main_magnetic_field = 7; %[T]
 
@@ -76,7 +77,7 @@ M_dynamic = [];
 echo_value= [];
 M_input = repmat([0;0;1],[1 FOVx_offset*FOVy_offset*FOVz_offset]);
 
-for tr = 73:n_TR
+for tr = 1:n_TR
     
     [rf_pulse_res,t_rf] = rf_pulse_sinc(flip_angle,RF_bandwidth,num_lobes,sampling_rate,RF_phaselist(tr));
     RFx = reshape(real(rf_pulse_res),[1 1 rf_t_size]);
@@ -93,19 +94,18 @@ for tr = 73:n_TR
     %     end
     %     M_input = [squeeze(M_delay(:,end,1))';squeeze(M_delay(:,end,2))';squeeze(M_delay(:,end,3))'];
     % end
-    for loc_x = 1:FOVx_offset*FOVy_offset*FOVz_offset
+    parfor loc_x = 1:FOVx_offset*FOVy_offset*FOVz_offset
 
 
-
+        warning('off');
         B_temp = squeeze(B_st(loc_x,:,:));
-
         ode = @(t,M) [-R2(loc_x) gam*B_temp(3,floor(t/tstep)) -gam*B_temp(2,floor(t/tstep));
             -gam*B_temp(3,floor(t/tstep)) -R2(loc_x) gam*B_temp(1,floor(t/tstep));
             gam*B_temp(2,floor(t/tstep)) -gam*B_temp(1,floor(t/tstep)) -R1(loc_x)] * M+ [0; 0; M0(loc_x)*R1(loc_x)];
 
-        [timeline, M_dynamic(loc_x,:,:)] = ode23s(ode, TP, M_input(:,loc_x)');
-        te_series(loc_x,tr,:) = M_dynamic(loc_x,TE*sampling_rate,:);
-
+        [~, sol] = ode23s(ode, TP, M_input(:,loc_x)');
+        te_series(loc_x, tr, :) = sol(TE*sampling_rate, :);
+        M_dynamic(loc_x,:,:) = sol;
     end
 
     display([num2str(tr),' TR: ',num2str(toc)])
