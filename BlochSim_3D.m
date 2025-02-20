@@ -117,7 +117,7 @@ end
 te_series = reshape(te_series,[FOVx_offset FOVy_offset FOVz_offset size(te_series,2) 3]);
 Echo_Mxy = abs(te_series(:,:,:,:,1) + 1i*te_series(:,:,:,:,2));
 Echo_Mz = te_series(:,:,:,:,3);
-
+save()
 % Echo_Mxy = squeeze(abs(te_series(:,:,1) + 1i*te_series(:,:,2)));
 % Echo_Mz = squeeze(te_series(:,:,3));
 % figure; hold on;
