@@ -10,7 +10,7 @@ T1=900e-3; T2 = 40e-3; % [s] : T1 and T2
 PD = 1; % Proton Density
 TR = 5e-3; TE = 2e-3; % Repetition time, Echo time
 flip_angle=5;
-inhomogeneity = 100; % [Hz]
+inhomogeneity = 0; % [Hz]
 
 phantom_T1 = load('phantom101').phantom_T1;
 phantom_T2 = load('phantom101').phantom_T2;
@@ -104,8 +104,9 @@ for tr = 1:n_TR
             gam*B_temp(2,floor(t/tstep)) -gam*B_temp(1,floor(t/tstep)) -R1(loc_x)] * M+ [0; 0; M0(loc_x)*R1(loc_x)];
 
         [~, sol] = ode23s(ode, TP, M_input(:,loc_x)');
+        M_dynamic(loc_x, :, :) = sol;
         te_series(loc_x, tr, :) = sol(TE*sampling_rate, :);
-        M_dynamic(loc_x,:,:) = sol;
+
     end
 
     display([num2str(tr),' TR: ',num2str(toc)])
@@ -116,7 +117,7 @@ end
 te_series = reshape(te_series,[FOVx_offset FOVy_offset FOVz_offset size(te_series,2) 3]);
 Echo_Mxy = abs(te_series(:,:,:,:,1) + 1i*te_series(:,:,:,:,2));
 Echo_Mz = te_series(:,:,:,:,3);
-
+save()
 % Echo_Mxy = squeeze(abs(te_series(:,:,1) + 1i*te_series(:,:,2)));
 % Echo_Mz = squeeze(te_series(:,:,3));
 % figure; hold on;
