@@ -18,16 +18,6 @@ end
 scale_factor = flip_angle_rad / (gamma * abs(area)); % Scaling factor
 sinc_pulse_scaled = scale_factor * sinc_pulse;
 
-% Plot results
-%     figure('Name','RF Pulse')
-%     subplot(2, 1, 1);
-%     plot(t_rf, sinc_pulse, 'LineWidth', 1.5);
-%     xlabel('Time (s)');
-%     ylabel('Amplitude (arb. units)');
-%     title('Unscaled Sinc Pulse');
-%     grid on;
-
-%     subplot(2, 1, 2);
 plot(t_rf, sinc_pulse_scaled, 'LineWidth', 1.5);
 xlabel('Time (s)');
 ylabel('B1 Amplitude (T)');
