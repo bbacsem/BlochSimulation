@@ -3,6 +3,7 @@ close all;
 warning('off');
 %% parameters
 main_magnetic_field = 7; %[T]
+RF_phase_increment = 0;
 
 n_TR =800;
 
@@ -43,7 +44,7 @@ TP = [tstep:tstep:TR];
 
 t_size = size(TP,2);
 
-RF_phaselist= phase_shift_angle(10000,117);
+RF_phaselist= phase_shift_angle(10000,RF_phase_increment);
 RF_phaselist = RF_phaselist/pi*180;
 
 rf_t_size = size(rf_pulse_res,2);
